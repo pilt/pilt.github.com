@@ -1,0 +1,262 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Co[de]mmunications</title>
+  <meta name="author" content="Simon Pantzare">
+
+  
+  <meta name="description" content="The system clock in my Sun Ultra 5 drifted away every few days. This is how
+<a href="http://openntpd.org/" title="OpenNTPD: a free implementation of &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://pilt.github.com/blog/page/3">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Co[de]mmunications" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-10709920-5']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Co[de]mmunications</a></h1>
+  
+    <h2>Programming and ramblings on software engineering.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:pilt.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+  
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2009/10/12/enabling-ntp-in-openbsd">Enabling NTP in OpenBSD</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-10-12T17:48:00+02:00" pubdate data-updated="true">Oct 12<span>th</span>, 2009</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>The system clock in my Sun Ultra 5 drifted away every few days. This is how
+<a href="http://openntpd.org/" title="OpenNTPD: a free implementation of the Network Time
+Protocol">NTP</a> is enabled in <a href="http://openbsd.org/" title="a free, multi-platform
+4.4BSD-based UNIX-like operating system">OpenBSD</a>:</p>
+
+<pre><code>$ sudo su -
+# echo 'ntpd_flags=""' &gt;&gt; /etc/rc.conf.local
+</code></pre>
+
+<p>This will cause the <code>ntpd</code> daemon to be started next time you reboot the system. To start it right now, do:</p>
+
+<pre><code>$ sudo ntpd
+</code></pre>
+
+<p>Last, to make sure the daemon is running correctly, examine the contents of <code>/var/log/daemon</code>:</p>
+
+<pre><code>$ sudo su -
+# cat /var/log/daemon | grep ntpd
+Oct 12 17:35:50 sverker ntpd[17976]: ntp engine ready
+Oct 12 17:36:09 sverker ntpd[17976]: peer 62.20.50.110 now valid
+Oct 12 17:36:10 sverker ntpd[17976]: peer 217.118.216.117 now valid
+Oct 12 17:36:11 sverker ntpd[17976]: peer 83.241.233.179 now valid
+Oct 12 17:36:11 sverker ntpd[17976]: peer 91.194.67.9 now valid
+Oct 12 17:36:12 sverker ntpd[17976]: peer 81.234.213.16 now valid
+Oct 12 17:37:08 sverker ntpd[19401]: adjusting local clock by 4.491034s
+Oct 12 17:40:57 sverker ntpd[19401]: adjusting local clock by 2.992072s
+Oct 12 17:43:03 sverker ntpd[19401]: adjusting local clock by 1.459956s
+Oct 12 17:47:16 sverker ntpd[19401]: adjusting local clock by -0.598555s
+Oct 12 17:50:25 sverker ntpd[19401]: adjusting local clock by -0.347570s
+Oct 12 17:50:25 sverker ntpd[17976]: clock is now synced
+Oct 12 18:25:26 sverker ntpd[19401]: adjusting local clock by -0.968709s
+Oct 12 18:27:36 sverker ntpd[19401]: adjusting local clock by -0.929344s
+Oct 12 18:27:36 sverker ntpd[19401]: adjusting clock frequency by -1280.000000 to -1280.000000ppm
+Oct 12 18:27:36 sverker ntpd[17976]: clock is now unsynced
+Oct 12 18:31:55 sverker ntpd[19401]: adjusting local clock by -0.614471s
+Oct 12 18:31:55 sverker ntpd[17976]: clock is now synced
+</code></pre>
+
+<p>If you are unfamiliar with the <code>sudo</code> and <code>su</code> utilities, I suggest you read <a href="http://www.sudo.ws/sudo/intro.html">this intro</a> and <a href="http://www.openbsd.org/cgi-bin/man.cgi?query=su">this manpage</a>. The short version is that you <strong>s</strong>ubstitute <strong>u</strong>ser identity (to root, in this case).</p>
+
+<p><strong>Update:</strong> As mentioned by <a href="http://www.reddit.com/r/openbsd/comments/9tcyu/enabling_ntp_in_openbsd/c0ed0d1">joedonut at reddit</a>, it is possible to enable NTP when you install OpenBSD. This article describes how to enable the daemon for users who chose not to do it at install time.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  <div class="pagination">
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+    <a class="next" href="/blog/page/2/">Newer &rarr;</a>
+    
+  </div>
+</div>
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/2011/08/13/collectionsdefaultdict">collections.defaultdict</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2011/08/11/python-functors">Python Functors</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2011/08/04/readable-logic">Readable Logic</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2011/07/30/its-a-time-zone-change-in-shanghai">It&#8217;s a Time Zone Change in Shanghai</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2011/07/30/incorporating-jammit-with-django">Incorporating Jammit With Django</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("simonpantzare", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/simonpantzare" class="twitter-follow-button" data-show-count="false">Follow @simonpantzare</a>
+  
+</section>
+
+
+
+
+
+  
+</aside>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2011 - Simon Pantzare -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'communications';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

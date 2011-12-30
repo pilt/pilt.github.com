@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: quotes | Co[de]mmunications]]></title>
+  <link href="http://pilt.github.com/categories/quotes/atom.xml" rel="self"/>
+  <link href="http://pilt.github.com/"/>
+  <updated>2011-12-30T17:57:42+01:00</updated>
+  <id>http://pilt.github.com/</id>
+  <author>
+    <name><![CDATA[Simon Pantzare]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Development Environment Tips]]></title>
+    <link href="http://pilt.github.com/2011/03/28/development-environment-tips"/>
+    <updated>2011-03-28T00:00:00+02:00</updated>
+    <id>http://pilt.github.com/2011/03/28/development-environment-tips</id>
+    <content type="html"><![CDATA[<p><blockquote><p>Other companies may indeed force 45-50 hour work weeks plus weekends, cram them in elbow-to-elbow and give them health plans with a $3,500/year deductible, but it doesn't mean you can sit pretty with your lead developer grinning and taking it. There's four things a developer, like any other human being, wants from a job: competitive salary, comfortable environment, challenging work, and a future. If you keep filling vacancies at the top from outside the company, then the bright kids at the bottom will seek work elsewhere even if it pays the same but gives them a sense of having a career path. If you make them work in a closet with 4 other programmers and inadequate ventilation, they'll bolt for the first place that gives them an office with a window. If you hire a whiz-kid and make him edit Microsoft Access forms in Visual Basic, you won't see him after a few months. If they find another job that pays more but has longer hours and commute, they will take it because it'll make them feel like they're getting paid what they're worth.</p></p><p><p>Of course, you could just hire H1B workers exclusively. That'll last until they get citizenship, or the other country's economy rises above ours.</p><footer><strong>C. Lawrence Wenham</strong> <cite><a href='http://www.yacoset.com/Home/development-environment-tips'>Web Site</a></cite></footer></blockquote></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Software Bugs]]></title>
+    <link href="http://pilt.github.com/2010/02/28/software-bugs"/>
+    <updated>2010-02-28T00:00:00+01:00</updated>
+    <id>http://pilt.github.com/2010/02/28/software-bugs</id>
+    <content type="html"><![CDATA[<p><blockquote><p>The only difference between a bug and a feature is the documentation.</p></blockquote>
+Source unknown.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Über Programmers]]></title>
+    <link href="http://pilt.github.com/2009/12/24/uber-programmers"/>
+    <updated>2009-12-24T00:00:00+01:00</updated>
+    <id>http://pilt.github.com/2009/12/24/uber-programmers</id>
+    <content type="html"><![CDATA[<p><blockquote><p>The romantic image of an über-programmer is someone who fires up Emacs, types like a machine gun, and delivers a flawless final product from scratch. A more accurate image would be someone who stares quietly into space for a few minutes and then says ‘Hmm. I think I’ve seen something like this before.’</p><footer><strong>John D. Cook</strong> <cite><a href='http://www.johndcook.com/blog/2009/12/23/why-programmers-are-not-paid-in-proportion-to-their-productivity/'>Blog</a></cite></footer></blockquote></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[The Goal of Computer Science]]></title>
+    <link href="http://pilt.github.com/2009/12/23/goal-of-computer-science"/>
+    <updated>2009-12-23T00:00:00+01:00</updated>
+    <id>http://pilt.github.com/2009/12/23/goal-of-computer-science</id>
+    <content type="html"><![CDATA[<p><blockquote><p>The ultimate goal of computer science is to help produce better systems. Would you trust someone who had not seen a patient for years to teach surgery? What would you think of a piano teacher who never touched the keyboard? A CS education must bring a student beyond the necessary book learning to a mastery of its application in complete systems and an appreciation of aesthetics in code.</p><footer><strong>Bjarne Stroustrup</strong> <cite><a href='http://cacm.acm.org/magazines/2010/1/55760-what-should-we-teach-new-software-developers-why/fulltext'>Communications of the ACM</a></cite></footer></blockquote></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Software Reuse]]></title>
+    <link href="http://pilt.github.com/2009/11/28/software-reuse"/>
+    <updated>2009-11-28T00:00:00+01:00</updated>
+    <id>http://pilt.github.com/2009/11/28/software-reuse</id>
+    <content type="html"><![CDATA[<p>On the problems with object oriented languages and software reuse. Joe Armstrong created Erlang.</p>
+
+<p><blockquote><p>You wanted a banana but what you got was a gorilla holding the banana and the entire jungle.</p><footer><strong>Joe Armstrong</strong> <cite><a href='http://www.codersatwork.com/'>Coders at Work</a></cite></footer></blockquote></p>
+]]></content>
+  </entry>
+  
+</feed>

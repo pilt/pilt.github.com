@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: tumblr | Co[de]mmunications]]></title>
+  <link href="http://pilt.github.com/categories/tumblr/atom.xml" rel="self"/>
+  <link href="http://pilt.github.com/"/>
+  <updated>2011-12-30T17:57:42+01:00</updated>
+  <id>http://pilt.github.com/</id>
+  <author>
+    <name><![CDATA[Simon Pantzare]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Using Javascript to Provide Dynamic Content in Tumblr]]></title>
+    <link href="http://pilt.github.com/2009/10/14/using-javascript-to-provide-dynamic-content-in-tumblr"/>
+    <updated>2009-10-14T14:48:00+02:00</updated>
+    <id>http://pilt.github.com/2009/10/14/using-javascript-to-provide-dynamic-content-in-tumblr</id>
+    <content type="html"><![CDATA[<p>This article describes how content can be added to Tumblr using Javascript, and the <a href="http://jquery.com/">jQuery library</a>. The reader should be familiar with web development.</p>
+
+<p><strong>A Simplified Theme</strong></p>
+
+<pre><code>&lt;html&gt;
+&lt;head&gt;
+  &lt;title&gt;My Tumblr&lt;/title&gt;
+  &lt;script type="text/javascript" src="http://example.org/jquery.js"&gt;&lt;/script&gt;
+  &lt;script type="text/javascript" src="http://example.org/tumblr-dyn.js"&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    {block:Posts}…{/block:Posts}
+    &lt;p id="quote-of-the-day" style="display:none"&gt;&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+<p>We shall add a quote to <code>#quote-of-the-day</code> for permalink views.</p>
+
+<p><strong><code>tumblr-dyn.js</code></strong></p>
+
+<pre><code>var isSinglePostView = function() {
+    var loc = document.baseURI;
+    var re = new RegExp(".*mytumblr.example.org/post/.*");
+    return loc.match(re) != null;
+}
+
+$(window).ready(function() {
+    if (isSinglePostView()) {
+        var qotd = $("#quote-of-the-day");
+        qotd.html(
+            '"You should\'ve seen the look on her face. It was the same look ' +
+            'my father gave me when I told him I wanted to be a ventriloquist."' +
+            ' – George Costanza');
+
+        qotd.css('display', 'block');
+    }
+});
+</code></pre>
+
+<p>You can use this approach to add custom content depending on what page the user is viewing.</p>
+]]></content>
+  </entry>
+  
+</feed>

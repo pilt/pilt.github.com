@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: NTP | Co[de]mmunications]]></title>
+  <link href="http://pilt.github.com/categories/ntp/atom.xml" rel="self"/>
+  <link href="http://pilt.github.com/"/>
+  <updated>2011-12-30T17:57:42+01:00</updated>
+  <id>http://pilt.github.com/</id>
+  <author>
+    <name><![CDATA[Simon Pantzare]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Enabling NTP in OpenBSD]]></title>
+    <link href="http://pilt.github.com/2009/10/12/enabling-ntp-in-openbsd"/>
+    <updated>2009-10-12T17:48:00+02:00</updated>
+    <id>http://pilt.github.com/2009/10/12/enabling-ntp-in-openbsd</id>
+    <content type="html"><![CDATA[<p>The system clock in my Sun Ultra 5 drifted away every few days. This is how
+<a href="http://openntpd.org/" title="OpenNTPD: a free implementation of the Network Time
+Protocol">NTP</a> is enabled in <a href="http://openbsd.org/" title="a free, multi-platform
+4.4BSD-based UNIX-like operating system">OpenBSD</a>:</p>
+
+<pre><code>$ sudo su -
+# echo 'ntpd_flags=""' &gt;&gt; /etc/rc.conf.local
+</code></pre>
+
+<p>This will cause the <code>ntpd</code> daemon to be started next time you reboot the system. To start it right now, do:</p>
+
+<pre><code>$ sudo ntpd
+</code></pre>
+
+<p>Last, to make sure the daemon is running correctly, examine the contents of <code>/var/log/daemon</code>:</p>
+
+<pre><code>$ sudo su -
+# cat /var/log/daemon | grep ntpd
+Oct 12 17:35:50 sverker ntpd[17976]: ntp engine ready
+Oct 12 17:36:09 sverker ntpd[17976]: peer 62.20.50.110 now valid
+Oct 12 17:36:10 sverker ntpd[17976]: peer 217.118.216.117 now valid
+Oct 12 17:36:11 sverker ntpd[17976]: peer 83.241.233.179 now valid
+Oct 12 17:36:11 sverker ntpd[17976]: peer 91.194.67.9 now valid
+Oct 12 17:36:12 sverker ntpd[17976]: peer 81.234.213.16 now valid
+Oct 12 17:37:08 sverker ntpd[19401]: adjusting local clock by 4.491034s
+Oct 12 17:40:57 sverker ntpd[19401]: adjusting local clock by 2.992072s
+Oct 12 17:43:03 sverker ntpd[19401]: adjusting local clock by 1.459956s
+Oct 12 17:47:16 sverker ntpd[19401]: adjusting local clock by -0.598555s
+Oct 12 17:50:25 sverker ntpd[19401]: adjusting local clock by -0.347570s
+Oct 12 17:50:25 sverker ntpd[17976]: clock is now synced
+Oct 12 18:25:26 sverker ntpd[19401]: adjusting local clock by -0.968709s
+Oct 12 18:27:36 sverker ntpd[19401]: adjusting local clock by -0.929344s
+Oct 12 18:27:36 sverker ntpd[19401]: adjusting clock frequency by -1280.000000 to -1280.000000ppm
+Oct 12 18:27:36 sverker ntpd[17976]: clock is now unsynced
+Oct 12 18:31:55 sverker ntpd[19401]: adjusting local clock by -0.614471s
+Oct 12 18:31:55 sverker ntpd[17976]: clock is now synced
+</code></pre>
+
+<p>If you are unfamiliar with the <code>sudo</code> and <code>su</code> utilities, I suggest you read <a href="http://www.sudo.ws/sudo/intro.html">this intro</a> and <a href="http://www.openbsd.org/cgi-bin/man.cgi?query=su">this manpage</a>. The short version is that you <strong>s</strong>ubstitute <strong>u</strong>ser identity (to root, in this case).</p>
+
+<p><strong>Update:</strong> As mentioned by <a href="http://www.reddit.com/r/openbsd/comments/9tcyu/enabling_ntp_in_openbsd/c0ed0d1">joedonut at reddit</a>, it is possible to enable NTP when you install OpenBSD. This article describes how to enable the daemon for users who chose not to do it at install time.</p>
+]]></content>
+  </entry>
+  
+</feed>

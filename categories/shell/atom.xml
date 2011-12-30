@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: shell | Co[de]mmunications]]></title>
+  <link href="http://pilt.github.com/categories/shell/atom.xml" rel="self"/>
+  <link href="http://pilt.github.com/"/>
+  <updated>2011-12-30T17:57:42+01:00</updated>
+  <id>http://pilt.github.com/</id>
+  <author>
+    <name><![CDATA[Simon Pantzare]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Shell-Scripting for Fun and Profit: Finding, Downloading, and Merging Course Slides to a Single PDF]]></title>
+    <link href="http://pilt.github.com/2009/10/22/shell-scripting-for-fun-and-profit-finding"/>
+    <updated>2009-10-22T18:23:00+02:00</updated>
+    <id>http://pilt.github.com/2009/10/22/shell-scripting-for-fun-and-profit-finding</id>
+    <content type="html"><![CDATA[<h4>Motivation</h4>
+
+<p>Professors often provide a page with links to lecture slides in PDF format. The main benefit of joining them to a single document, is that one can use a reader's search function to find topics and keywords faster than when searching in multiple documents.<!-- more --></p>
+
+<h4>The Script</h4>
+
+<p>Change the <code>URL</code> variable to the page with links  to lecture slides. Edit the <code>grep</code> and <code>pdfjoin</code> lines to match filenames of provided lecture slides.</p>
+
+<pre><code>#! /bin/sh
+
+TARGET_FILE=all-lectures.pdf
+URL="http://www.ida.liu.se/~TDDC88/theory/lectures.shtml"
+
+for prog in wget lynx pdfjoin; do
+    which $prog 1&gt;/dev/null
+    if [ $? -ne 0 ]; then
+        echo $prog needed but not found.
+        exit 1
+    fi
+done
+
+PDF_URLS=$(
+    lynx -listonly -dump -hiddenlinks=merge $URL \
+    | tail -n+4 \
+    | awk '{print $2}' \
+    | grep 'lecture-.*-pps6.pdf'
+    )
+
+TEMPDIR=$(mktemp -d)
+cd $TEMPDIR
+echo Fetching PDFs...
+wget $PDF_URLS
+echo Joining documents...
+pdfjoin $(seq -f 'lecture-%g-*-pps6.pdf' 1 $(echo $PDF_URLS | wc -w))
+cd -
+mv $TEMPDIR/*-joined.pdf $TARGET_FILE
+rm -r $TEMPDIR
+echo PDF $TARGET_FILE was generated.
+</code></pre>
+
+<h4>Future Improvements</h4>
+
+<ul>
+<li>Get rid of the <code>lynx</code> dependency</li>
+<li>Download all found documents simultaneously (in background jobs, perhaps)</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

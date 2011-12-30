@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: C | Co[de]mmunications]]></title>
+  <link href="http://pilt.github.com/categories/c/atom.xml" rel="self"/>
+  <link href="http://pilt.github.com/"/>
+  <updated>2011-12-30T17:57:42+01:00</updated>
+  <id>http://pilt.github.com/</id>
+  <author>
+    <name><![CDATA[Simon Pantzare]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[The Use of “do { … } while (0)” in C Macros]]></title>
+    <link href="http://pilt.github.com/2009/10/16/the-use-of-do-while-0-in-c-macros"/>
+    <updated>2009-10-16T00:00:00+02:00</updated>
+    <id>http://pilt.github.com/2009/10/16/the-use-of-do-while-0-in-c-macros</id>
+    <content type="html"><![CDATA[<p>Consider a countdown program.</p>
+
+<p><strong><code>countdown.c</code>:</strong></p>
+
+<pre><code>#include &lt;stdio.h&gt;
+#include &lt;unistd.h&gt;
+
+int main(int argc, char **argv)
+{
+    int seconds = 3; 
+
+    for (int i = seconds; i != 0; --i) {
+        printf("%i... ", i);
+        fflush(stdout);
+        sleep(1);
+    }
+    puts("Go!");
+
+    return 0;
+}
+</code></pre>
+
+<p>The goal is to put the actual countdown code in a macro. It fits perfectly in a function, but a macro is used for illustration purposes. <!-- more -->A first attempt at a solution is presented.</p>
+
+<p><strong><code>solution1.c</code>:</strong></p>
+
+<pre><code>#include &lt;stdio.h&gt;
+#include &lt;unistd.h&gt;
+
+#define COUNTDOWN(seconds) \
+    for (int i = (seconds); i != 0; --i) { \
+        printf("%i... ", i); \
+        fflush(stdout); \
+        sleep(1); \
+    } \
+    puts("Go!")
+
+int main(int argc, char **argv)
+{
+    COUNTDOWN(3);
+
+    return 0;
+}
+</code></pre>
+
+<p>This works fine in the example, but consider what happens when an <code>if</code> clause is added.</p>
+
+<p><strong>Part of <code>solution1-if.c</code>:</strong></p>
+
+<pre><code>    bool start_countdown = false;
+
+    if (start_countdown)
+        COUNTDOWN(3);
+</code></pre>
+
+<p>The output when this program is run is "Go!." To know what happens, look at the output of <code>gcc -std=c99 -O0 -E solution1-if.c | indent -linux</code>:</p>
+
+<pre><code>int main(int argc, char **argv)
+{
+    _Bool start_countdown = 0;
+
+    if (start_countdown)
+        for (int i = (3); i != 0; --i) {
+            printf("%i... ", i);
+            fflush(stdout);
+            sleep(1);
+        }
+    puts("Go!");
+
+    return 0;
+}
+</code></pre>
+
+<p>Oops! A second attempt is to wrap the macro in braces.</p>
+
+<p><strong>Part of <code>solution2.c</code>:</strong></p>
+
+<pre><code>#define COUNTDOWN(seconds) \
+    { \
+        for (int i = (seconds); i != 0; --i) { \
+            printf("%i... ", i); \
+            fflush(stdout); \
+            sleep(1); \
+        } \
+        puts("Go!"); \
+    }
+</code></pre>
+
+<p>Perfect! This code runs as expected.</p>
+
+<p>Now consider what happens when an <code>else</code> clause is added.</p>
+
+<p><strong>Part of <code>solution2-else.c</code>:</strong></p>
+
+<pre><code>    if (start_countdown)
+        COUNTDOWN(3);
+    else
+        puts("Not ready to start countdown.");
+</code></pre>
+
+<p>This doesn't even compile!</p>
+
+<pre><code>$ gcc -std=c99 solution2-else.c
+solution2-else.c: In function ‘main’:
+solution2-else:21: error: ‘else’ without a previous ‘if’
+</code></pre>
+
+<p>Again, have a look at the code after macro expansion:</p>
+
+<pre><code>int main(int argc, char **argv)
+{
+    _Bool start_countdown = 0;
+
+    if (start_countdown) {
+        for (int i = (3); i != 0; --i) {
+            printf("%i... ", i);
+            fflush(stdout);
+            sleep(1);
+        } puts("Go!");
+    };
+    else
+    puts("Not ready to start countdown.");
+
+    return 0;
+}
+</code></pre>
+
+<p>Notice the badly placed semi-colon. A final solution is presented, which will behave as expected in all situations.</p>
+
+<p><strong><code>final.c</code>:</strong></p>
+
+<pre><code>#include &lt;stdbool.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;unistd.h&gt;
+
+#define COUNTDOWN(seconds) \
+    do { \
+        for (int i = (seconds); i != 0; --i) { \
+            printf("%i... ", i); \
+            fflush(stdout); \
+            sleep(1); \
+        } \
+        puts("Go!"); \
+    } while (0)
+
+int main(int argc, char **argv)
+{
+    bool start_countdown = true;
+
+    if (start_countdown)
+        COUNTDOWN(3);
+    else
+        puts("Not ready to start countdown.");
+
+    return 0;
+}
+</code></pre>
+
+<p>After macro expansion:</p>
+
+<pre><code>int main(int argc, char **argv)
+{
+    _Bool start_countdown = 1;
+
+    if (start_countdown)
+        do {
+            for (int i = (3); i != 0; --i) {
+                printf("%i... ", i);
+                fflush(stdout);
+                sleep(1);
+            } puts("Go!");
+        } while (0);
+    else
+        puts("Not ready to start countdown.");
+
+    return 0;
+}
+</code></pre>
+
+<p>One concern that needs to be addressed is how the <code>seconds</code> argument could be expanded. Furthermore, this technique isn't the preferable solution most of the time, but if you run into it, you'll know what it's usually for. Another use is to prevent a macro to be used as an expression,</p>
+
+<pre><code>#define INCR_EXPR(x) ++(x)
+#define INCR_STMT(x) do { ++(x); } while (0)
+
+int main(int argc, char **argv)
+{
+    int a = 0;
+    int b = 0;
+
+    a = INCR_EXPR(b);
+    INCR_STMT(b);
+    return 0;
+}
+</code></pre>
+
+<p>had it been,</p>
+
+<pre><code>    a = INCR_STMT(b);
+</code></pre>
+
+<p>gcc would fail with an error "expected expression before ‘do’:"</p>
+
+<pre><code>a = ++(b);
+a =
+do {
+    ++(b);
+} while (0);
+return 0;
+</code></pre>
+]]></content>
+  </entry>
+  
+</feed>

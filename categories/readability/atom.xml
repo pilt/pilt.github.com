@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: readability | Co[de]mmunications]]></title>
+  <link href="http://pilt.github.com/categories/readability/atom.xml" rel="self"/>
+  <link href="http://pilt.github.com/"/>
+  <updated>2011-12-30T17:57:42+01:00</updated>
+  <id>http://pilt.github.com/</id>
+  <author>
+    <name><![CDATA[Simon Pantzare]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Software Readability]]></title>
+    <link href="http://pilt.github.com/2011/06/12/software-readability"/>
+    <updated>2011-06-12T00:00:00+02:00</updated>
+    <id>http://pilt.github.com/2011/06/12/software-readability</id>
+    <content type="html"><![CDATA[<p><blockquote><p>Programs must be written for people to read, and only incidentally for machines to execute.</p><footer><strong>Abelson &amp; Sussman</strong> <cite>SICP</cite></footer></blockquote></p>
+]]></content>
+  </entry>
+  
+</feed>

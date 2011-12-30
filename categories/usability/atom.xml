@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: usability | Co[de]mmunications]]></title>
+  <link href="http://pilt.github.com/categories/usability/atom.xml" rel="self"/>
+  <link href="http://pilt.github.com/"/>
+  <updated>2011-12-30T17:57:42+01:00</updated>
+  <id>http://pilt.github.com/</id>
+  <author>
+    <name><![CDATA[Simon Pantzare]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Enhanced Numerical Input Fields]]></title>
+    <link href="http://pilt.github.com/2011/07/24/enhanced-numerical-input-fields"/>
+    <updated>2011-07-24T21:06:00+02:00</updated>
+    <id>http://pilt.github.com/2011/07/24/enhanced-numerical-input-fields</id>
+    <content type="html"><![CDATA[<p>Increment or decrement numerical input fields on mouse wheel up and down events. Requires the <a href="https://github.com/brandonaaron/jquery-mousewheel">jquery-mousewheel</a> plugin. Code in <a href="http://jashkenas.github.com/coffee-script/">Coffeescript</a>.</p>
+
+<p><div><script src='https://gist.github.com/1102970.js?file='></script>
+<noscript><pre><code>&lt;input type=&quot;text&quot; class=&quot;num gte0&quot;&gt;</code></pre></noscript></div>
+</p>
+]]></content>
+  </entry>
+  
+</feed>

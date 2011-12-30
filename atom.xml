@@ -1,0 +1,808 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Co[de]mmunications]]></title>
+  <link href="http://pilt.github.com/atom.xml" rel="self"/>
+  <link href="http://pilt.github.com/"/>
+  <updated>2011-12-30T17:57:42+01:00</updated>
+  <id>http://pilt.github.com/</id>
+  <author>
+    <name><![CDATA[Simon Pantzare]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[collections.defaultdict]]></title>
+    <link href="http://pilt.github.com/2011/08/13/collectionsdefaultdict"/>
+    <updated>2011-08-13T10:52:00+02:00</updated>
+    <id>http://pilt.github.com/2011/08/13/collectionsdefaultdict</id>
+    <content type="html"><![CDATA[<p>I learned about this gem today. No more <code>if k not in d: d[k] = []</code>. <a href="http://docs.python.org/library/collections.html#defaultdict-examples">Examples.</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Python Functors]]></title>
+    <link href="http://pilt.github.com/2011/08/11/python-functors"/>
+    <updated>2011-08-11T21:28:00+02:00</updated>
+    <id>http://pilt.github.com/2011/08/11/python-functors</id>
+    <content type="html"><![CDATA[<p>The task is to multiply items in some iterable by three.</p>
+
+<pre><code>multipled = [3 * s for s in series]
+</code></pre>
+
+<p>One list comprehension later, the task is complete.</p>
+
+<p>Next, we find out that we need to count how many multiplications are
+performed. <code>len()</code> is forbidden, because we are dealing with iterators
+(and inevitably the <a href="http://docs.python.org/library/itertools.html">itertools</a>
+module). One solution is to create a <code>CallCounting</code> class that wraps
+callables.</p>
+
+<pre><code>class CallCounting(object):
+
+    def __init__(self, func):
+        self.count = 0
+        self.func = func
+
+    def __call__(self, *args, **kwargs):
+        self.count += 1
+        return self.func(*args, **kwargs)
+
+timesthree = CallCounting(lambda x: 3 * x)
+multipled = [timesthree(n) for n in series]
+
+print "%d calls" % timesthree.count
+</code></pre>
+
+<p>This is efficient as well as readable. The main action is to multiply
+items. We keep a call count just for bookkeeping. Compare with</p>
+
+<pre><code>calls = 0
+multipled = []
+for n in series:
+    calls += 1
+    multipled.append(3 * n)
+
+print "%d calls" % calls
+</code></pre>
+
+<p>that is both ugly and inefficient.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Readable Logic]]></title>
+    <link href="http://pilt.github.com/2011/08/04/readable-logic"/>
+    <updated>2011-08-04T07:30:00+02:00</updated>
+    <id>http://pilt.github.com/2011/08/04/readable-logic</id>
+    <content type="html"><![CDATA[<p>Compare</p>
+
+<pre><code>if (!device || !this.launched) {
+    abort();
+}
+else {
+    run();
+}
+</code></pre>
+
+<p>with</p>
+
+<pre><code>if (device &amp;&amp; this.launched) {
+    run();
+}
+else {
+    abort();
+}
+</code></pre>
+
+<p>Chances are, you are wired to parse the second version faster. Make it a
+habit to see if your code&#8217;s readability can be improved by avoiding
+negations.</p>
+
+<p>Nesting can also improve readability.</p>
+
+<pre><code>if (a) {
+    doFirstThing();
+}
+if (a &amp;&amp; b) {
+    doSecondThing();
+}
+if (!a &amp;&amp; b) {
+    doThirdThing();
+}
+</code></pre>
+
+<p>versus</p>
+
+<pre><code>if (a) {
+    doFirstThing();
+    if (b) {
+        doSecondThing();
+    }
+}
+else {
+    if (b) {
+        doThirdThing();
+    }
+}
+</code></pre>
+
+<p>The best logic of all is no logic. Compare</p>
+
+<pre><code>if (person.isChild) {
+    run();
+}
+else if (person.isBaby) {
+    crawl();
+}
+else if (person.isSenior) {
+    sit();
+}
+else {
+    walk();
+}
+</code></pre>
+
+<p>with a data-driven approach</p>
+
+<pre><code>var groupAction = {
+    children: run,
+    babies: crawl,
+    seniors: sit
+}
+
+var action = groupAction[person.group] || walk;
+action();
+</code></pre>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[It's a Time Zone Change in Shanghai]]></title>
+    <link href="http://pilt.github.com/2011/07/30/its-a-time-zone-change-in-shanghai"/>
+    <updated>2011-07-30T15:59:00+02:00</updated>
+    <id>http://pilt.github.com/2011/07/30/its-a-time-zone-change-in-shanghai</id>
+    <content type="html"><![CDATA[<blockquote><p>See this page for details of 1927 in Shanghai. Basically at midnight at the end of 1927, the clocks went back 5 minutes and 52 seconds. So &#8220;1927-12-31 23:54:08&#8221; actually happened twice, and it looks like Java is parsing it as the later possibly instant for that local date/time - hence the difference.</p><p>Just another episode in the often weird and wonderful world of time zones.</p><footer><strong>Jon Skeet</strong> <cite><a href='http://stackoverflow.com/questions/6841333/why-is-subtracting-these-two-times-in-1927-giving-a-strange-result'>Stack Overflow</a></cite></footer></blockquote>
+
+
+<p>Besides illustrating how difficult dealing with time is, this is a
+textbook example of why estimations really are guesstimations. I am certain
+that Freewind spent a good deal of time trying to solve this problem
+before submitting it to Stack Overflow. In any project of considerable size,
+you run into these road bumps. Even though you know how
+of a workaround, it is worthwhile to find the root cause and solve
+problems in a <em>clean</em> manner instead of polluting systems with ad-hoc fixes.
+Given enough time, any quick-fix will come back to haunt the maintenance programmer.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Incorporating Jammit With Django]]></title>
+    <link href="http://pilt.github.com/2011/07/30/incorporating-jammit-with-django"/>
+    <updated>2011-07-30T14:48:00+02:00</updated>
+    <id>http://pilt.github.com/2011/07/30/incorporating-jammit-with-django</id>
+    <content type="html"><![CDATA[<p><a href="http://documentcloud.github.com/jammit/">Jammit</a> is an asset packaging
+library for Rails written by the hackers at <a href="http://www.documentcloud.org/">DocumentCloud</a> (they also brought us <a href="http://documentcloud.github.com/backbone/">Backbone</a>).</p>
+
+<p>It works pretty much out of the box in Django, but a little configuration is
+needed.</p>
+
+<div><script src='https://gist.github.com/1115489.js?file='></script>
+<noscript><pre><code># Put this file in core/management/commands/ (or other app of your choice).
+# -*- coding: utf-8 -*-
+from subprocess import call
+
+from django.core.management.base import BaseCommand, CommandError
+from django.core.management import call_command
+
+class Command(BaseCommand):
+    help = &quot;Collect static files and create assets.&quot;
+    
+    def handle(self, **options):
+        call_command('collectstatic', link=True, interactive=False)
+        # staticfiles's finders will not find assets if they are put
+        # in public/assets/ (symlink to static/assets/) directly. This is
+        # also why we override STATICFILES_DIRS in settings.py.
+        call(['jammit', '--output', 'jammit/assets', '--force'])</code></pre></noscript></div>
+
+
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Enhanced Numerical Input Fields]]></title>
+    <link href="http://pilt.github.com/2011/07/24/enhanced-numerical-input-fields"/>
+    <updated>2011-07-24T21:06:00+02:00</updated>
+    <id>http://pilt.github.com/2011/07/24/enhanced-numerical-input-fields</id>
+    <content type="html"><![CDATA[<p>Increment or decrement numerical input fields on mouse wheel up and down events. Requires the <a href="https://github.com/brandonaaron/jquery-mousewheel">jquery-mousewheel</a> plugin. Code in <a href="http://jashkenas.github.com/coffee-script/">Coffeescript</a>.</p>
+
+<div><script src='https://gist.github.com/1102970.js?file='></script>
+<noscript><pre><code>&lt;input type=&quot;text&quot; class=&quot;num gte0&quot;&gt;</code></pre></noscript></div>
+
+
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Software Readability]]></title>
+    <link href="http://pilt.github.com/2011/06/12/software-readability"/>
+    <updated>2011-06-12T00:00:00+02:00</updated>
+    <id>http://pilt.github.com/2011/06/12/software-readability</id>
+    <content type="html"><![CDATA[<blockquote><p>Programs must be written for people to read, and only incidentally for machines to execute.</p><footer><strong>Abelson & Sussman</strong> <cite>SICP</cite></footer></blockquote>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Multiple JSONP Requests]]></title>
+    <link href="http://pilt.github.com/2011/06/09/multiple-jsonp-requests"/>
+    <updated>2011-06-09T00:00:00+02:00</updated>
+    <id>http://pilt.github.com/2011/06/09/multiple-jsonp-requests</id>
+    <content type="html"><![CDATA[<p>Multiple JSONP requests and a single callback can be problematic. I did</p>
+
+<pre><code>window['callback'+idx] = callback;
+</code></pre>
+
+<p>and then <code>?jsonp=callback0</code>, <code>?jsonp=callback1</code>, …</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Softwarization]]></title>
+    <link href="http://pilt.github.com/2011/06/06/softwarization"/>
+    <updated>2011-06-06T00:00:00+02:00</updated>
+    <id>http://pilt.github.com/2011/06/06/softwarization</id>
+    <content type="html"><![CDATA[<blockquote><p>The advantages of doing things in software on a single device are so great that everything that can get turned into software will. So for the next couple years, a good recipe for startups will be to look around you for things that people haven&#8217;t realized yet can be made unnecessary by a tablet app.</p><footer><strong>Paul Graham</strong> <cite><a href='http://www.paulgraham.com/tablets.html'>Web Site</a></cite></footer></blockquote>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Development Environment Tips]]></title>
+    <link href="http://pilt.github.com/2011/03/28/development-environment-tips"/>
+    <updated>2011-03-28T00:00:00+02:00</updated>
+    <id>http://pilt.github.com/2011/03/28/development-environment-tips</id>
+    <content type="html"><![CDATA[<blockquote><p>Other companies may indeed force 45-50 hour work weeks plus weekends, cram them in elbow-to-elbow and give them health plans with a $3,500/year deductible, but it doesn&#8217;t mean you can sit pretty with your lead developer grinning and taking it. There&#8217;s four things a developer, like any other human being, wants from a job: competitive salary, comfortable environment, challenging work, and a future. If you keep filling vacancies at the top from outside the company, then the bright kids at the bottom will seek work elsewhere even if it pays the same but gives them a sense of having a career path. If you make them work in a closet with 4 other programmers and inadequate ventilation, they&#8217;ll bolt for the first place that gives them an office with a window. If you hire a whiz-kid and make him edit Microsoft Access forms in Visual Basic, you won&#8217;t see him after a few months. If they find another job that pays more but has longer hours and commute, they will take it because it&#8217;ll make them feel like they&#8217;re getting paid what they&#8217;re worth.</p><p>Of course, you could just hire H1B workers exclusively. That&#8217;ll last until they get citizenship, or the other country&#8217;s economy rises above ours.</p><footer><strong>C. Lawrence Wenham</strong> <cite><a href='http://www.yacoset.com/Home/development-environment-tips'>Web Site</a></cite></footer></blockquote>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Tangled Up in Tools]]></title>
+    <link href="http://pilt.github.com/2010/04/08/tangled-up-in-tools"/>
+    <updated>2010-04-08T00:00:00+02:00</updated>
+    <id>http://pilt.github.com/2010/04/08/tangled-up-in-tools</id>
+    <content type="html"><![CDATA[<p>On what&#8217;s wrong with libraries, and what to do about it.</p>
+
+<blockquote><p>The simplest thing that we can do right now is to rethink how we document libraries. Automatic documentation tools like Javadoc and Rdoc are good for producing thick stacks of paper, but not so hot at actually telling library users the things they need to know. They are the source of most of the world’s “newRecordAddedHook is called when a new record is added” documentation. They can be useful, but they are no substitute for actually writing about the library: single-page summaries that answer the three key questions: what the library does, why you should use it, and how to do so. For bonus points, the one-page summary should avoid using the word “enterprise” (unless it’s a library of Star Trek ships) and “innovative.”</p><footer><strong>Mike Taylor</strong> <cite><a href='http://pragprog.com/magazines/2010-04/tangled-up-in-tools'>Blog</a></cite></footer></blockquote>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Software Bugs]]></title>
+    <link href="http://pilt.github.com/2010/02/28/software-bugs"/>
+    <updated>2010-02-28T00:00:00+01:00</updated>
+    <id>http://pilt.github.com/2010/02/28/software-bugs</id>
+    <content type="html"><![CDATA[<blockquote><p>The only difference between a bug and a feature is the documentation.</p></blockquote>
+
+
+<p>Source unknown.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Über Programmers]]></title>
+    <link href="http://pilt.github.com/2009/12/24/uber-programmers"/>
+    <updated>2009-12-24T00:00:00+01:00</updated>
+    <id>http://pilt.github.com/2009/12/24/uber-programmers</id>
+    <content type="html"><![CDATA[<blockquote><p>The romantic image of an über-programmer is someone who fires up Emacs, types like a machine gun, and delivers a flawless final product from scratch. A more accurate image would be someone who stares quietly into space for a few minutes and then says ‘Hmm. I think I’ve seen something like this before.’</p><footer><strong>John D. Cook</strong> <cite><a href='http://www.johndcook.com/blog/2009/12/23/why-programmers-are-not-paid-in-proportion-to-their-productivity/'>Blog</a></cite></footer></blockquote>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[The Goal of Computer Science]]></title>
+    <link href="http://pilt.github.com/2009/12/23/goal-of-computer-science"/>
+    <updated>2009-12-23T00:00:00+01:00</updated>
+    <id>http://pilt.github.com/2009/12/23/goal-of-computer-science</id>
+    <content type="html"><![CDATA[<blockquote><p>The ultimate goal of computer science is to help produce better systems. Would you trust someone who had not seen a patient for years to teach surgery? What would you think of a piano teacher who never touched the keyboard? A CS education must bring a student beyond the necessary book learning to a mastery of its application in complete systems and an appreciation of aesthetics in code.</p><footer><strong>Bjarne Stroustrup</strong> <cite><a href='http://cacm.acm.org/magazines/2010/1/55760-what-should-we-teach-new-software-developers-why/fulltext'>Communications of the ACM</a></cite></footer></blockquote>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Software Reuse]]></title>
+    <link href="http://pilt.github.com/2009/11/28/software-reuse"/>
+    <updated>2009-11-28T00:00:00+01:00</updated>
+    <id>http://pilt.github.com/2009/11/28/software-reuse</id>
+    <content type="html"><![CDATA[<p>On the problems with object oriented languages and software reuse. Joe Armstrong created Erlang.</p>
+
+<blockquote><p>You wanted a banana but what you got was a gorilla holding the banana and the entire jungle.</p><footer><strong>Joe Armstrong</strong> <cite><a href='http://www.codersatwork.com/'>Coders at Work</a></cite></footer></blockquote>
+
+
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Shell-Scripting for Fun and Profit: Finding, Downloading, and Merging Course Slides to a Single PDF]]></title>
+    <link href="http://pilt.github.com/2009/10/22/shell-scripting-for-fun-and-profit-finding"/>
+    <updated>2009-10-22T18:23:00+02:00</updated>
+    <id>http://pilt.github.com/2009/10/22/shell-scripting-for-fun-and-profit-finding</id>
+    <content type="html"><![CDATA[<h4>Motivation</h4>
+
+<p>Professors often provide a page with links to lecture slides in PDF format. The main benefit of joining them to a single document, is that one can use a reader&#8217;s search function to find topics and keywords faster than when searching in multiple documents.<!-- more --></p>
+
+<h4>The Script</h4>
+
+<p>Change the <code>URL</code> variable to the page with links  to lecture slides. Edit the <code>grep</code> and <code>pdfjoin</code> lines to match filenames of provided lecture slides.</p>
+
+<pre><code>#! /bin/sh
+
+TARGET_FILE=all-lectures.pdf
+URL="http://www.ida.liu.se/~TDDC88/theory/lectures.shtml"
+
+for prog in wget lynx pdfjoin; do
+    which $prog 1&gt;/dev/null
+    if [ $? -ne 0 ]; then
+        echo $prog needed but not found.
+        exit 1
+    fi
+done
+
+PDF_URLS=$(
+    lynx -listonly -dump -hiddenlinks=merge $URL \
+    | tail -n+4 \
+    | awk '{print $2}' \
+    | grep 'lecture-.*-pps6.pdf'
+    )
+
+TEMPDIR=$(mktemp -d)
+cd $TEMPDIR
+echo Fetching PDFs...
+wget $PDF_URLS
+echo Joining documents...
+pdfjoin $(seq -f 'lecture-%g-*-pps6.pdf' 1 $(echo $PDF_URLS | wc -w))
+cd -
+mv $TEMPDIR/*-joined.pdf $TARGET_FILE
+rm -r $TEMPDIR
+echo PDF $TARGET_FILE was generated.
+</code></pre>
+
+<h4>Future Improvements</h4>
+
+<ul>
+<li>Get rid of the <code>lynx</code> dependency</li>
+<li>Download all found documents simultaneously (in background jobs, perhaps)</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Real VMX QEMU Script]]></title>
+    <link href="http://pilt.github.com/2009/10/19/real-vmx-qemu-script"/>
+    <updated>2009-10-19T15:38:00+02:00</updated>
+    <id>http://pilt.github.com/2009/10/19/real-vmx-qemu-script</id>
+    <content type="html"><![CDATA[<p>A script for people who want to develop for Real VMX, <a href="http://sourceforge.net/projects/vmx/">a VxWorks-like operating system kernel</a>. The script installs ext2, GRUB, and a vanilla kernel to a small (32 MiB) QEMU image.</p>
+
+<p><img src="http://github.com/pilt/Real-VMX-QEMU-Script/raw/master/images/screenshot-real-vmx-0.1.4.png" alt="Real VMX running in QEMU." /></p>
+
+<p>Some features of Real VMX:</p>
+
+<ul>
+<li>Priority-based multitasking and round robin scheduling</li>
+<li>Partition-based memory management</li>
+<li>Binary and counting semaphores with priority-inheritance</li>
+<li>Message queues for inter-process communication</li>
+<li>Virtual memory</li>
+</ul>
+
+
+<p>Real VMX is licensed under the LGPL.</p>
+
+<p><a href="http://wiki.github.com/pilt/Real-VMX-QEMU-Script">Get the script here!</a> (only tested in Linux)</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[The Use of “do { … } while (0)” in C Macros]]></title>
+    <link href="http://pilt.github.com/2009/10/16/the-use-of-do-while-0-in-c-macros"/>
+    <updated>2009-10-16T00:00:00+02:00</updated>
+    <id>http://pilt.github.com/2009/10/16/the-use-of-do-while-0-in-c-macros</id>
+    <content type="html"><![CDATA[<p>Consider a countdown program.</p>
+
+<p><strong><code>countdown.c</code>:</strong></p>
+
+<pre><code>#include &lt;stdio.h&gt;
+#include &lt;unistd.h&gt;
+
+int main(int argc, char **argv)
+{
+    int seconds = 3; 
+
+    for (int i = seconds; i != 0; --i) {
+        printf("%i... ", i);
+        fflush(stdout);
+        sleep(1);
+    }
+    puts("Go!");
+
+    return 0;
+}
+</code></pre>
+
+<p>The goal is to put the actual countdown code in a macro. It fits perfectly in a function, but a macro is used for illustration purposes. <!-- more -->A first attempt at a solution is presented.</p>
+
+<p><strong><code>solution1.c</code>:</strong></p>
+
+<pre><code>#include &lt;stdio.h&gt;
+#include &lt;unistd.h&gt;
+
+#define COUNTDOWN(seconds) \
+    for (int i = (seconds); i != 0; --i) { \
+        printf("%i... ", i); \
+        fflush(stdout); \
+        sleep(1); \
+    } \
+    puts("Go!")
+
+int main(int argc, char **argv)
+{
+    COUNTDOWN(3);
+
+    return 0;
+}
+</code></pre>
+
+<p>This works fine in the example, but consider what happens when an <code>if</code> clause is added.</p>
+
+<p><strong>Part of <code>solution1-if.c</code>:</strong></p>
+
+<pre><code>    bool start_countdown = false;
+
+    if (start_countdown)
+        COUNTDOWN(3);
+</code></pre>
+
+<p>The output when this program is run is &#8220;Go!.&#8221; To know what happens, look at the output of <code>gcc -std=c99 -O0 -E solution1-if.c | indent -linux</code>:</p>
+
+<pre><code>int main(int argc, char **argv)
+{
+    _Bool start_countdown = 0;
+
+    if (start_countdown)
+        for (int i = (3); i != 0; --i) {
+            printf("%i... ", i);
+            fflush(stdout);
+            sleep(1);
+        }
+    puts("Go!");
+
+    return 0;
+}
+</code></pre>
+
+<p>Oops! A second attempt is to wrap the macro in braces.</p>
+
+<p><strong>Part of <code>solution2.c</code>:</strong></p>
+
+<pre><code>#define COUNTDOWN(seconds) \
+    { \
+        for (int i = (seconds); i != 0; --i) { \
+            printf("%i... ", i); \
+            fflush(stdout); \
+            sleep(1); \
+        } \
+        puts("Go!"); \
+    }
+</code></pre>
+
+<p>Perfect! This code runs as expected.</p>
+
+<p>Now consider what happens when an <code>else</code> clause is added.</p>
+
+<p><strong>Part of <code>solution2-else.c</code>:</strong></p>
+
+<pre><code>    if (start_countdown)
+        COUNTDOWN(3);
+    else
+        puts("Not ready to start countdown.");
+</code></pre>
+
+<p>This doesn&#8217;t even compile!</p>
+
+<pre><code>$ gcc -std=c99 solution2-else.c
+solution2-else.c: In function ‘main’:
+solution2-else:21: error: ‘else’ without a previous ‘if’
+</code></pre>
+
+<p>Again, have a look at the code after macro expansion:</p>
+
+<pre><code>int main(int argc, char **argv)
+{
+    _Bool start_countdown = 0;
+
+    if (start_countdown) {
+        for (int i = (3); i != 0; --i) {
+            printf("%i... ", i);
+            fflush(stdout);
+            sleep(1);
+        } puts("Go!");
+    };
+    else
+    puts("Not ready to start countdown.");
+
+    return 0;
+}
+</code></pre>
+
+<p>Notice the badly placed semi-colon. A final solution is presented, which will behave as expected in all situations.</p>
+
+<p><strong><code>final.c</code>:</strong></p>
+
+<pre><code>#include &lt;stdbool.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;unistd.h&gt;
+
+#define COUNTDOWN(seconds) \
+    do { \
+        for (int i = (seconds); i != 0; --i) { \
+            printf("%i... ", i); \
+            fflush(stdout); \
+            sleep(1); \
+        } \
+        puts("Go!"); \
+    } while (0)
+
+int main(int argc, char **argv)
+{
+    bool start_countdown = true;
+
+    if (start_countdown)
+        COUNTDOWN(3);
+    else
+        puts("Not ready to start countdown.");
+
+    return 0;
+}
+</code></pre>
+
+<p>After macro expansion:</p>
+
+<pre><code>int main(int argc, char **argv)
+{
+    _Bool start_countdown = 1;
+
+    if (start_countdown)
+        do {
+            for (int i = (3); i != 0; --i) {
+                printf("%i... ", i);
+                fflush(stdout);
+                sleep(1);
+            } puts("Go!");
+        } while (0);
+    else
+        puts("Not ready to start countdown.");
+
+    return 0;
+}
+</code></pre>
+
+<p>One concern that needs to be addressed is how the <code>seconds</code> argument could be expanded. Furthermore, this technique isn&#8217;t the preferable solution most of the time, but if you run into it, you&#8217;ll know what it&#8217;s usually for. Another use is to prevent a macro to be used as an expression,</p>
+
+<pre><code>#define INCR_EXPR(x) ++(x)
+#define INCR_STMT(x) do { ++(x); } while (0)
+
+int main(int argc, char **argv)
+{
+    int a = 0;
+    int b = 0;
+
+    a = INCR_EXPR(b);
+    INCR_STMT(b);
+    return 0;
+}
+</code></pre>
+
+<p>had it been,</p>
+
+<pre><code>    a = INCR_STMT(b);
+</code></pre>
+
+<p>gcc would fail with an error &#8220;expected expression before ‘do’:&#8221;</p>
+
+<pre><code>a = ++(b);
+a =
+do {
+    ++(b);
+} while (0);
+return 0;
+</code></pre>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Using Javascript to Provide Dynamic Content in Tumblr]]></title>
+    <link href="http://pilt.github.com/2009/10/14/using-javascript-to-provide-dynamic-content-in-tumblr"/>
+    <updated>2009-10-14T14:48:00+02:00</updated>
+    <id>http://pilt.github.com/2009/10/14/using-javascript-to-provide-dynamic-content-in-tumblr</id>
+    <content type="html"><![CDATA[<p>This article describes how content can be added to Tumblr using Javascript, and the <a href="http://jquery.com/">jQuery library</a>. The reader should be familiar with web development.</p>
+
+<p><strong>A Simplified Theme</strong></p>
+
+<pre><code>&lt;html&gt;
+&lt;head&gt;
+  &lt;title&gt;My Tumblr&lt;/title&gt;
+  &lt;script type="text/javascript" src="http://example.org/jquery.js"&gt;&lt;/script&gt;
+  &lt;script type="text/javascript" src="http://example.org/tumblr-dyn.js"&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    {block:Posts}…{/block:Posts}
+    &lt;p id="quote-of-the-day" style="display:none"&gt;&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+<p>We shall add a quote to <code>#quote-of-the-day</code> for permalink views.</p>
+
+<p><strong><code>tumblr-dyn.js</code></strong></p>
+
+<pre><code>var isSinglePostView = function() {
+    var loc = document.baseURI;
+    var re = new RegExp(".*mytumblr.example.org/post/.*");
+    return loc.match(re) != null;
+}
+
+$(window).ready(function() {
+    if (isSinglePostView()) {
+        var qotd = $("#quote-of-the-day");
+        qotd.html(
+            '"You should\'ve seen the look on her face. It was the same look ' +
+            'my father gave me when I told him I wanted to be a ventriloquist."' +
+            ' – George Costanza');
+
+        qotd.css('display', 'block');
+    }
+});
+</code></pre>
+
+<p>You can use this approach to add custom content depending on what page the user is viewing.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Configuring an SSH Gateway]]></title>
+    <link href="http://pilt.github.com/2009/10/13/configuring-an-ssh-gateway"/>
+    <updated>2009-10-13T14:40:00+02:00</updated>
+    <id>http://pilt.github.com/2009/10/13/configuring-an-ssh-gateway</id>
+    <content type="html"><![CDATA[<p>An SSH gateway can be used where multiple hosts share the same IP address, where it isn&#8217;t possible, or acceptable, to use separate ports for the hosts&#8217; SSH daemons.<!-- more --></p>
+
+<p>Consider the following network,</p>
+
+<p><img src="http://i.imgur.com/OaD4i.png" alt="Alice and Bob both need to work with two servers, they reach the servers through an SSH gateway" /></p>
+
+<p>where Alice and Bob both need to work with two servers, on the same external IP address, and a restrictive firewall (or sysadmin) that refuses to open non-standard ports for the internal servers&#8217; SSH daemons. However, the SSH daemon on a third internal host, the SSH gateway, is reachable by Alice and Bob from the outside. The SSH gateway can connect to the web and mail servers&#8217; SSH daemons by their internal IP addresses.</p>
+
+<p>Now, Alice and Bob could be satisfied with connecting to the SSH gateway, and then to <strong>manually</strong> open a second connection to the web or the mail server. This is tiring in the long run, however, and the rest of this article describes how to <strong>automate</strong> this process.</p>
+
+<p>First, two new user accounts are created on the gateway: <code>web-server</code>, and <code>mail-server</code>.</p>
+
+<pre><code>$ sudo su -
+# useradd web-server
+# useradd mail-server
+</code></pre>
+
+<p>We run the <code>ssh-keygen</code> utility for both new users, to create public/private SSH key pairs in the <code>~/.ssh</code> directory. These key pairs will be used to let Bob and Alice connect from the gateway to the internal servers, without having to enter their passwords.</p>
+
+<pre><code>$ sudo su web-server -
+$ ssh-keygen
+Generating public/private rsa key pair.
+Enter file in which to save the key (/home/web-server/.ssh/id_rsa):
+Created directory '/home/web-server/.ssh'.
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in /home/web-server/.ssh/id_rsa.
+Your public key has been saved in /home/web-server/.ssh/id_rsa.pub.
+The key fingerprint is:
+cf:9e:18:a3:dc:6c:48:1a:b4:7d:5c:d5:84:da:d0:f1 web-server@gateway
+The key's randomart image is:
++--[ RSA 2048]----+
+|           ..=.  |
+|          . +..  |
+|           =  E  |
+|    .     o .    |
+|   . o .S.       |
+|    o o oo       |
+|     + oo o      |
+|    ...+.= .     |
+|      o.+ o      |
++-----------------+
+$ exit
+</code></pre>
+
+<p>(Repeat this twice, the second time for <code>mail-server</code>.)</p>
+
+<p>It is assumed that Alice and Bob already have their own accounts on the servers. The next step is to configure these accounts to authenticate connections from the gateway by keys.</p>
+
+<p><strong>1. Copy public keys on the gateway to the servers</strong></p>
+
+<pre><code>$ sudo su web-server -
+$ scp ~/.ssh/id_rsa.pub alice@web-server:web_key
+The authenticity of host 'web-server (192.168.0.10)' can't be established.
+RSA key fingerprint is 72:1d:15:7a:05:21:f3:fe:e2:7a:11:88:ab:45:18:bd.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added 'web-server' (RSA) to the list of known hosts.
+alice@web-server's password:
+id_rsa.pub                                             100%  393     0.4KB/s   00:00
+$ exit
+$ sudo su mail-server - # now the same thing on the mail server
+$ scp ~/.ssh/id_rsa.pub alice@mail-server:mail_key
+The authenticity of host 'mail-server (192.168.0.20)' can't be established.
+RSA key fingerprint is 72:1d:15:7a:05:21:f3:fe:e2:7a:11:88:ab:45:18:bd.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added 'mail-server' (RSA) to the list of known hosts.
+alice@mail-server's password:
+id_rsa.pub                                             100%  393     0.6KB/s   00:00
+</code></pre>
+
+<p><strong>2. Add public keys to <code>~/.ssh/authorized_keys</code> on the servers</strong></p>
+
+<pre><code>$ ssh alice@web-server
+alice@web-server's password:
+$ mkdir -p .ssh
+$ cat web_key &gt;&gt; .ssh/authorized_keys
+$ chmod go-rwx .ssh/authorized_keys
+$ exit
+$ ssh alice@mail-server # same thing at the mail server
+alice@mail-server's password:
+$ mkdir -p .ssh
+$ cat mail_key &gt;&gt; .ssh/authorized_keys
+$ chmod go-rwx .ssh/authorized_keys
+$ exit
+</code></pre>
+
+<p>(Repeat step 2 for Bob.)</p>
+
+<p>The result of step 1 and 2 is that the users <code>web-server</code> and <code>mail-server</code> on the gateway can open connections to their internal targets without having to enter a password. Only users who are trusted to use the servers as <strong>both</strong> Alice and Bob shall be trusted to log in <strong>directly</strong> as <code>web-server</code> or <code>mail-server</code> at the gateway.</p>
+
+<p>The final step is to let Alice and Bob authenticate as <code>web-server</code> and <code>mail-server</code> on the gateway with their external hosts&#8217; public keys, and to make the gateway automatically open a second connection to the appropriate internal server.</p>
+
+<ol>
+<li>Get Alice&#8217;s and Bob&#8217;s public keys (found in <code>~/.ssh/id_rsa.pub</code> or possibly <code>~/.ssh/id_dsa.pub</code> on their machines). If the keys haven&#8217;t been generated, ask them to run <code>ssh-keygen</code> as described earlier.</li>
+<li>Add both Alice&#8217;s and Bob&#8217;s keys to <code>/home/web-server/.ssh/authorized_keys</code> and <code>/home/mail-server/.ssh/authorized_keys</code> on the gateway. This step is described earlier.</li>
+<li><p>Prepend &#8220;command&#8221; instructions to lines in the <code>authorized_keys</code> files, on the gateway. Next is an example on how <code>/home/web-server/.ssh/authorized_keys</code> could look.</p>
+
+<pre><code>$ cat ~/.ssh/authorized_keys
+command="ssh -t bob@web-server" ssh-dss AAAAB3N…YJylbjCVHQ== bob@bob-external-host
+command="ssh -t alice@alice-server" ssh-rsa AAAAB3N…a9Sydw== alice@alice-external-host
+</code></pre></li>
+</ol>
+
+
+<p>To try it out, ask Alice or Bob to authenticate as <code>web-server</code> or <code>mail-server</code> on the gateway. Here&#8217;s how it shall look for Alice:</p>
+
+<pre><code>$ ssh web-server@gateway-external-host
+Last login: Fri Oct  9 11:56:59 2009 from alice-external-host
+$ whoami
+alice 
+$ exit
+Connection to web-server closed.
+Connection to gateway-external-host closed.
+$ ssh mail-server@gateway-external-host
+Last login: Fri Oct  4 18:56:59 2009 from alice-external-host
+$ whoami
+alice 
+$ exit
+Connection to mail-server closed.
+Connection to gateway-external-host closed.
+</code></pre>
+]]></content>
+  </entry>
+  
+</feed>

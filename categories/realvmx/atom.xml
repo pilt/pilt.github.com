@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: RealVMX | Co[de]mmunications]]></title>
+  <link href="http://pilt.github.com/categories/realvmx/atom.xml" rel="self"/>
+  <link href="http://pilt.github.com/"/>
+  <updated>2011-12-30T17:57:42+01:00</updated>
+  <id>http://pilt.github.com/</id>
+  <author>
+    <name><![CDATA[Simon Pantzare]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Real VMX QEMU Script]]></title>
+    <link href="http://pilt.github.com/2009/10/19/real-vmx-qemu-script"/>
+    <updated>2009-10-19T15:38:00+02:00</updated>
+    <id>http://pilt.github.com/2009/10/19/real-vmx-qemu-script</id>
+    <content type="html"><![CDATA[<p>A script for people who want to develop for Real VMX, <a href="http://sourceforge.net/projects/vmx/">a VxWorks-like operating system kernel</a>. The script installs ext2, GRUB, and a vanilla kernel to a small (32 MiB) QEMU image.</p>
+
+<p><img src="http://github.com/pilt/Real-VMX-QEMU-Script/raw/master/images/screenshot-real-vmx-0.1.4.png" alt="Real VMX running in QEMU." /></p>
+
+<p>Some features of Real VMX:</p>
+
+<ul>
+<li>Priority-based multitasking and round robin scheduling</li>
+<li>Partition-based memory management</li>
+<li>Binary and counting semaphores with priority-inheritance</li>
+<li>Message queues for inter-process communication</li>
+<li>Virtual memory</li>
+</ul>
+
+
+<p>Real VMX is licensed under the LGPL.</p>
+
+<p><a href="http://wiki.github.com/pilt/Real-VMX-QEMU-Script">Get the script here!</a> (only tested in Linux)</p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,389 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Configuring an SSH Gateway - Co[de]mmunications</title>
+  <meta name="author" content="Simon Pantzare">
+
+  
+  <meta name="description" content="An SSH gateway can be used where multiple hosts share the same IP address, where it isn&#8217;t possible, or acceptable, to use separate ports for &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://pilt.github.com/2009/10/13/configuring-an-ssh-gateway">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Co[de]mmunications" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-10709920-5']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Co[de]mmunications</a></h1>
+  
+    <h2>Programming and ramblings on software engineering.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:pilt.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Configuring an SSH Gateway</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-10-13T14:40:00+02:00" pubdate data-updated="true">Oct 13<span>th</span>, 2009</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>An SSH gateway can be used where multiple hosts share the same IP address, where it isn&#8217;t possible, or acceptable, to use separate ports for the hosts&#8217; SSH daemons.<!-- more --></p>
+
+<p>Consider the following network,</p>
+
+<p><img src="http://i.imgur.com/OaD4i.png" alt="Alice and Bob both need to work with two servers, they reach the servers through an SSH gateway" /></p>
+
+<p>where Alice and Bob both need to work with two servers, on the same external IP address, and a restrictive firewall (or sysadmin) that refuses to open non-standard ports for the internal servers&#8217; SSH daemons. However, the SSH daemon on a third internal host, the SSH gateway, is reachable by Alice and Bob from the outside. The SSH gateway can connect to the web and mail servers&#8217; SSH daemons by their internal IP addresses.</p>
+
+<p>Now, Alice and Bob could be satisfied with connecting to the SSH gateway, and then to <strong>manually</strong> open a second connection to the web or the mail server. This is tiring in the long run, however, and the rest of this article describes how to <strong>automate</strong> this process.</p>
+
+<p>First, two new user accounts are created on the gateway: <code>web-server</code>, and <code>mail-server</code>.</p>
+
+<pre><code>$ sudo su -
+# useradd web-server
+# useradd mail-server
+</code></pre>
+
+<p>We run the <code>ssh-keygen</code> utility for both new users, to create public/private SSH key pairs in the <code>~/.ssh</code> directory. These key pairs will be used to let Bob and Alice connect from the gateway to the internal servers, without having to enter their passwords.</p>
+
+<pre><code>$ sudo su web-server -
+$ ssh-keygen
+Generating public/private rsa key pair.
+Enter file in which to save the key (/home/web-server/.ssh/id_rsa):
+Created directory '/home/web-server/.ssh'.
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in /home/web-server/.ssh/id_rsa.
+Your public key has been saved in /home/web-server/.ssh/id_rsa.pub.
+The key fingerprint is:
+cf:9e:18:a3:dc:6c:48:1a:b4:7d:5c:d5:84:da:d0:f1 web-server@gateway
+The key's randomart image is:
++--[ RSA 2048]----+
+|           ..=.  |
+|          . +..  |
+|           =  E  |
+|    .     o .    |
+|   . o .S.       |
+|    o o oo       |
+|     + oo o      |
+|    ...+.= .     |
+|      o.+ o      |
++-----------------+
+$ exit
+</code></pre>
+
+<p>(Repeat this twice, the second time for <code>mail-server</code>.)</p>
+
+<p>It is assumed that Alice and Bob already have their own accounts on the servers. The next step is to configure these accounts to authenticate connections from the gateway by keys.</p>
+
+<p><strong>1. Copy public keys on the gateway to the servers</strong></p>
+
+<pre><code>$ sudo su web-server -
+$ scp ~/.ssh/id_rsa.pub alice@web-server:web_key
+The authenticity of host 'web-server (192.168.0.10)' can't be established.
+RSA key fingerprint is 72:1d:15:7a:05:21:f3:fe:e2:7a:11:88:ab:45:18:bd.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added 'web-server' (RSA) to the list of known hosts.
+alice@web-server's password:
+id_rsa.pub                                             100%  393     0.4KB/s   00:00
+$ exit
+$ sudo su mail-server - # now the same thing on the mail server
+$ scp ~/.ssh/id_rsa.pub alice@mail-server:mail_key
+The authenticity of host 'mail-server (192.168.0.20)' can't be established.
+RSA key fingerprint is 72:1d:15:7a:05:21:f3:fe:e2:7a:11:88:ab:45:18:bd.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added 'mail-server' (RSA) to the list of known hosts.
+alice@mail-server's password:
+id_rsa.pub                                             100%  393     0.6KB/s   00:00
+</code></pre>
+
+<p><strong>2. Add public keys to <code>~/.ssh/authorized_keys</code> on the servers</strong></p>
+
+<pre><code>$ ssh alice@web-server
+alice@web-server's password:
+$ mkdir -p .ssh
+$ cat web_key &gt;&gt; .ssh/authorized_keys
+$ chmod go-rwx .ssh/authorized_keys
+$ exit
+$ ssh alice@mail-server # same thing at the mail server
+alice@mail-server's password:
+$ mkdir -p .ssh
+$ cat mail_key &gt;&gt; .ssh/authorized_keys
+$ chmod go-rwx .ssh/authorized_keys
+$ exit
+</code></pre>
+
+<p>(Repeat step 2 for Bob.)</p>
+
+<p>The result of step 1 and 2 is that the users <code>web-server</code> and <code>mail-server</code> on the gateway can open connections to their internal targets without having to enter a password. Only users who are trusted to use the servers as <strong>both</strong> Alice and Bob shall be trusted to log in <strong>directly</strong> as <code>web-server</code> or <code>mail-server</code> at the gateway.</p>
+
+<p>The final step is to let Alice and Bob authenticate as <code>web-server</code> and <code>mail-server</code> on the gateway with their external hosts&#8217; public keys, and to make the gateway automatically open a second connection to the appropriate internal server.</p>
+
+<ol>
+<li>Get Alice&#8217;s and Bob&#8217;s public keys (found in <code>~/.ssh/id_rsa.pub</code> or possibly <code>~/.ssh/id_dsa.pub</code> on their machines). If the keys haven&#8217;t been generated, ask them to run <code>ssh-keygen</code> as described earlier.</li>
+<li>Add both Alice&#8217;s and Bob&#8217;s keys to <code>/home/web-server/.ssh/authorized_keys</code> and <code>/home/mail-server/.ssh/authorized_keys</code> on the gateway. This step is described earlier.</li>
+<li><p>Prepend &#8220;command&#8221; instructions to lines in the <code>authorized_keys</code> files, on the gateway. Next is an example on how <code>/home/web-server/.ssh/authorized_keys</code> could look.</p>
+
+<pre><code>$ cat ~/.ssh/authorized_keys
+command="ssh -t bob@web-server" ssh-dss AAAAB3N…YJylbjCVHQ== bob@bob-external-host
+command="ssh -t alice@alice-server" ssh-rsa AAAAB3N…a9Sydw== alice@alice-external-host
+</code></pre></li>
+</ol>
+
+
+<p>To try it out, ask Alice or Bob to authenticate as <code>web-server</code> or <code>mail-server</code> on the gateway. Here&#8217;s how it shall look for Alice:</p>
+
+<pre><code>$ ssh web-server@gateway-external-host
+Last login: Fri Oct  9 11:56:59 2009 from alice-external-host
+$ whoami
+alice 
+$ exit
+Connection to web-server closed.
+Connection to gateway-external-host closed.
+$ ssh mail-server@gateway-external-host
+Last login: Fri Oct  4 18:56:59 2009 from alice-external-host
+$ whoami
+alice 
+$ exit
+Connection to mail-server closed.
+Connection to gateway-external-host closed.
+</code></pre>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Simon Pantzare</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-10-13T14:40:00+02:00" pubdate data-updated="true">Oct 13<span>th</span>, 2009</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/categories/ssh/'>ssh</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://pilt.github.com/2009/10/13/configuring-an-ssh-gateway" data-via="simonpantzare" data-counturl="http://pilt.github.com/2009/10/13/configuring-an-ssh-gateway" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/2009/10/12/enabling-ntp-in-openbsd" title="Previous Post: Enabling NTP in OpenBSD">&laquo; Enabling NTP in OpenBSD</a>
+      
+      
+        <a class="basic-alignment right" href="/2009/10/14/using-javascript-to-provide-dynamic-content-in-tumblr" title="next Post: Using Javascript to Provide Dynamic Content in Tumblr">Using Javascript to Provide Dynamic Content in Tumblr &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/2011/08/13/collectionsdefaultdict">collections.defaultdict</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2011/08/11/python-functors">Python Functors</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2011/08/04/readable-logic">Readable Logic</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2011/07/30/its-a-time-zone-change-in-shanghai">It's a Time Zone Change in Shanghai</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2011/07/30/incorporating-jammit-with-django">Incorporating Jammit With Django</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("simonpantzare", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/simonpantzare" class="twitter-follow-button" data-show-count="false">Follow @simonpantzare</a>
+  
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2011 - Simon Pantzare -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'communications';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://pilt.github.com/2009/10/13/configuring-an-ssh-gateway';
+        var disqus_url = 'http://pilt.github.com/2009/10/13/configuring-an-ssh-gateway';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

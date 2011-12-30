@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: timezones | Co[de]mmunications]]></title>
+  <link href="http://pilt.github.com/categories/timezones/atom.xml" rel="self"/>
+  <link href="http://pilt.github.com/"/>
+  <updated>2011-12-30T17:57:42+01:00</updated>
+  <id>http://pilt.github.com/</id>
+  <author>
+    <name><![CDATA[Simon Pantzare]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[It's a Time Zone Change in Shanghai]]></title>
+    <link href="http://pilt.github.com/2011/07/30/its-a-time-zone-change-in-shanghai"/>
+    <updated>2011-07-30T15:59:00+02:00</updated>
+    <id>http://pilt.github.com/2011/07/30/its-a-time-zone-change-in-shanghai</id>
+    <content type="html"><![CDATA[<p><blockquote><p>See this page for details of 1927 in Shanghai. Basically at midnight at the end of 1927, the clocks went back 5 minutes and 52 seconds. So "1927-12-31 23:54:08" actually happened twice, and it looks like Java is parsing it as the later possibly instant for that local date/time - hence the difference.</p></p><p><p>Just another episode in the often weird and wonderful world of time zones.</p><footer><strong>Jon Skeet</strong> <cite><a href='http://stackoverflow.com/questions/6841333/why-is-subtracting-these-two-times-in-1927-giving-a-strange-result'>Stack Overflow</a></cite></footer></blockquote></p>
+
+<p>Besides illustrating how difficult dealing with time is, this is a
+textbook example of why estimations really are guesstimations. I am certain
+that Freewind spent a good deal of time trying to solve this problem
+before submitting it to Stack Overflow. In any project of considerable size,
+you run into these road bumps. Even though you know how
+of a workaround, it is worthwhile to find the root cause and solve
+problems in a <em>clean</em> manner instead of polluting systems with ad-hoc fixes.
+Given enough time, any quick-fix will come back to haunt the maintenance programmer.</p>
+]]></content>
+  </entry>
+  
+</feed>
